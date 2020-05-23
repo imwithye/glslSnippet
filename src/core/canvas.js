@@ -9,8 +9,12 @@ void main() {
 const FragCode = `
 precision mediump float;
 void main() {
-    gl_FragColor = vec4(1, 0, 0, 1);
+    gl_FragColor = vec4(1, 0, 1, 1);
 }`
+const FragCodeHeader = `
+precision mediump float;
+
+`
 
 class Canvas {
     constructor(container) {
@@ -21,7 +25,20 @@ class Canvas {
         this.render = true;
         this.gl = this.element.getContext("webgl");
         this.programInfo = twgl.createProgramInfo(this.gl, [VertCode, FragCode]);
+        this.errorProgramInfo = twgl.createProgramInfo(this.gl, [VertCode, FragCode]);
         this.bufferInfo = twgl.createBufferInfoFromArrays(this.gl, VertBuffer);
+    }
+
+    setFragmentCode(fragCode) {
+        try {
+            this.programInfo = twgl.createProgramInfo(this.gl, [VertCode, `${FragCodeHeader}${fragCode}`], [], (msg, lineOffset) => {
+                console.log(msg);
+            });
+        } catch {
+            this.programInfo = null;
+        }
+
+        console.log(this.programInfo);
     }
 
     setTop(height) {
@@ -32,12 +49,17 @@ class Canvas {
         if (!this.render) {
             return;
         }
-        this.gl.viewport(0, 0, this.element.width, this.element.height);
-        this.gl.clearColor(0, 0, 0, 1);
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT | this.gl.STENCIL_BUFFER_BIT);
-        this.gl.useProgram(this.programInfo.program);
-        twgl.setBuffersAndAttributes(this.gl, this.programInfo, this.bufferInfo);
-        twgl.drawBufferInfo(this.gl, this.bufferInfo);
+        try {
+            this.gl.viewport(0, 0, this.element.width, this.element.height);
+            this.gl.clearColor(0, 0, 0, 1);
+            this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT | this.gl.STENCIL_BUFFER_BIT);
+            const programInfo = this.programInfo == null ? this.errorProgramInfo : this.programInfo;
+            this.gl.useProgram(programInfo.program);
+            twgl.setBuffersAndAttributes(this.gl, programInfo, this.bufferInfo);
+            twgl.drawBufferInfo(this.gl, this.bufferInfo);
+        } catch (e) {
+            console.log(e);
+        }
     }
 }
 

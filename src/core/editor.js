@@ -45,6 +45,10 @@ class Editor {
         return this.editor.getCursor();
     }
 
+    getValue() {
+        return this.editor.getValue();
+    }
+
     setValue(content) {
         this.editor.setValue(content);
     }
