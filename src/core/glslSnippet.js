@@ -44,6 +44,12 @@ class Snippet {
         this.canvasElement = document.createElement('canvas');
         this.canvasElement.classList.add("glslSnippet-canvas");
         this.container.appendChild(this.canvasElement);
+
+        this.editor.on('cursorActivity', (e) => {
+            let height = e.heightAtLine(e.getCursor().line + 1, 'local') - this.canvasElement.clientHeight;
+            this.canvasElement.style.top = height < 0 ? '0px' : `${height}px`;
+        });
+
         this.gl = this.canvasElement.getContext("webgl");
         this.vertCode = `
         attribute vec4 pos;
