@@ -3,7 +3,22 @@
   <head>
     <title>GLSL Snippet</title>
     <script src="./dist/glslSnippet.js"></script>
+    <style>
+      .container {
+        max-width: 768px;
+        width: 100%;
+        margin: auto;
+      }
+    </style>
   </head>
 
-  <body></body>
+  <body>
+    <div class="container">
+      <div id="snippet"></div>
+    </div>
+
+    <script>
+        const editor = glslSnippet.edit(document.getElementById("snippet"));
+    </script>
+  </body>
 </html>

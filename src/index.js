@@ -1,9 +1,9 @@
-// This is a file
+const Snippet = require("./core/glslSnippet");
 
-function test() {
-    console.log("test");
+function edit(element) {
+    const code = element.innerHTML;
+    element.innerHTML = "";
+    return new Snippet(element, code);
 }
 
-module.exports = {
-    test
-}
+module.exports = { edit };
