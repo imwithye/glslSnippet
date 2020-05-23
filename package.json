@@ -1,14 +1,19 @@
 {
-  "name": "shader-snippet",
+  "name": "glsl-snippet",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "gulp build"
   },
   "author": "Yiwei, Gong",
   "license": "MIT",
   "devDependencies": {
-    "gulp": "^4.0.2"
+    "browserify": "^16.5.1",
+    "gulp": "^4.0.2",
+    "gulp-header": "^2.0.9",
+    "gulp-strip-comments": "^2.5.2",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
   }
 }
