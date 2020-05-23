@@ -1,4 +1,17 @@
-require('codemirror/mode/css/css');
+require('codemirror/addon/search/search');
+require('codemirror/addon/search/searchcursor');
+require('codemirror/addon/comment/comment');
+require('codemirror/addon/dialog/dialog');
+require('codemirror/addon/edit/matchbrackets');
+require('codemirror/addon/edit/closebrackets');
+require('codemirror/addon/wrap/hardwrap');
+require('codemirror/addon/fold/foldcode');
+require('codemirror/addon/fold/foldgutter');
+require('codemirror/addon/fold/indent-fold');
+require('codemirror/addon/hint/show-hint');
+require('codemirror/addon/hint/javascript-hint');
+require('codemirror/addon/display/rulers');
+require('codemirror/addon/display/panel');
 require('codemirror/mode/clike/clike.js');
 const CodeMirror = require('codemirror');
 const twgl = require('twgl.js/dist/4.x/twgl-full');
@@ -10,16 +23,17 @@ class Snippet {
         this.element = element;
 
         this.container = document.createElement('div');
-        this.container.style.width = "100%";
-        this.container.style.minHeight = "300px";
-        this.container.style.position = "relative";
+        this.container.classList.add("glslSnippet-container");
         this.element.appendChild(this.container);
 
         this.editorElement = document.createElement('div');
-        this.editorElement.style.width = "100%";
-        this.editorElement.style.height = "300px";
+        this.editorElement.classList.add("glslSnippet-editor");
         this.container.appendChild(this.editorElement);
         this.editor = CodeMirror(this.editorElement, {
+            matchBrackets: true,
+            autoCloseBrackets: true,
+            showCursorWhenSelecting: true,
+            viewportMargin: Infinity,
             lineNumbers: true,
             theme: "base16-light",
             mode: 'x-shader/x-fragment',
@@ -28,13 +42,7 @@ class Snippet {
         this.editor.setValue(code.trim());
 
         this.canvasElement = document.createElement('canvas');
-        this.canvasElement.style.maxWidth = "250px";
-        this.canvasElement.style.maxHeight = "250px";
-        this.canvasElement.style.width = "250px";
-        this.canvasElement.style.height = "250px";
-        this.canvasElement.style.position = "absolute";
-        this.canvasElement.style.top = "0";
-        this.canvasElement.style.right = "0";
+        this.canvasElement.classList.add("glslSnippet-canvas");
         this.container.appendChild(this.canvasElement);
         this.gl = this.canvasElement.getContext("webgl");
         this.vertCode = `

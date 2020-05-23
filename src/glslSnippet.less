@@ -3,3 +3,33 @@
 
 /* Themes */
 @import 'codemirror/theme/base16-light.css';
+
+@minHeight: 250px;
+
+.CodeMirror {
+    height: auto;
+    min-height: @minHeight;
+}
+
+.glslSnippet-container {
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: @minHeight;
+}
+
+.glslSnippet-editor {
+    width: 100%;
+    height: auto;
+    min-height: @minHeight;
+}
+
+.glslSnippet-canvas {
+    position: absolute;
+    max-width: @minHeight;
+    max-height: @minHeight;
+    width: @minHeight;
+    height: @minHeight;
+    top: 0;
+    right: 0;
+}
