@@ -23,8 +23,11 @@ class Editor {
         this.editor = CodeMirror(this.element, {
             matchBrackets: true,
             autoCloseBrackets: true,
+            indentUnit: 4,
+            indentWithTabs: false,
             showCursorWhenSelecting: true,
             viewportMargin: Infinity,
+            tabSize: 4,
             lineNumbers: true,
             theme: "base16-light",
             mode: 'x-shader/x-fragment',

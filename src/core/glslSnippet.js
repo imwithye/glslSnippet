@@ -6,7 +6,7 @@ class Snippet {
     constructor(element, code) {
         this.element = element;
 
-        this.control = new Control(this.element);
+        // this.control = new Control(this.element);
 
         this.container = document.createElement('div');
         this.container.classList.add("glslSnippet-container");

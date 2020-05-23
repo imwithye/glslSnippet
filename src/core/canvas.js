@@ -15,6 +15,12 @@ const FragCodeHeader = `
 precision mediump float;
 
 `
+const FragCodeFooter = `
+
+void main() {
+    gl_FragColor = FragColor();
+}
+`;
 
 class Canvas {
     constructor(container) {
@@ -30,15 +36,8 @@ class Canvas {
     }
 
     setFragmentCode(fragCode) {
-        try {
-            this.programInfo = twgl.createProgramInfo(this.gl, [VertCode, `${FragCodeHeader}${fragCode}`], [], (msg, lineOffset) => {
-                console.log(msg);
-            });
-        } catch {
-            this.programInfo = null;
-        }
-
-        console.log(this.programInfo);
+        fragCode = `${FragCodeHeader}${fragCode}${FragCodeFooter}`;
+        this.programInfo = twgl.createProgramInfo(this.gl, [VertCode, fragCode]);
     }
 
     setTop(height) {
