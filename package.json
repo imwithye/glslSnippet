@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "make": "gulp make",
+    "watch": "gulp watch",
     "build": "gulp build"
   },
   "author": "Yiwei, Gong",

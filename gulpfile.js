@@ -7,7 +7,7 @@ const browserify = require('browserify');
 const header = require('gulp-header');
 const stripComments = require('gulp-strip-comments');
 const jsbeautifier = require('gulp-jsbeautifier');
-let uglify = require('gulp-uglify-es').default;
+const uglify = require('gulp-uglify-es').default;
 const pkg = require('./package.json');
 
 gulp.task('build', () => browserify('./src/index.js', { standalone: 'glslSnippet' })
@@ -41,4 +41,10 @@ gulp.task('beautify', () => gulp.src(['src/**/*.js'])
     .pipe(gulp.dest('src'))
 );
 
+// Rerun the task when a file changes
+gulp.task('watch', () => {
+    gulp.watch('src/**/*.js', gulp.series('build'));
+});
+
+gulp.task('watch', gulp.series('build', 'watch'));
 gulp.task('make', gulp.series('build', 'beautify', 'minify'));
