@@ -9,10 +9,33 @@ class Snippet {
     constructor(element, code) {
         this.element = element;
 
+        this.container = document.createElement('div');
+        this.container.style.width = "100%";
+        this.container.style.minHeight = "300px";
+        this.container.style.position = "relative";
+        this.element.appendChild(this.container);
+
+        this.editorElement = document.createElement('div');
+        this.editorElement.style.width = "100%";
+        this.editorElement.style.height = "300px";
+        this.container.appendChild(this.editorElement);
+        this.editor = CodeMirror(this.editorElement, {
+            lineNumbers: true,
+            theme: "base16-light",
+            mode: 'x-shader/x-fragment',
+            dragDrop: false,
+        });
+        this.editor.setValue(code.trim());
+
         this.canvasElement = document.createElement('canvas');
-        this.canvasElement.style.width = "100%";
-        this.canvasElement.style.height = "400px";
-        this.element.appendChild(this.canvasElement);
+        this.canvasElement.style.maxWidth = "250px";
+        this.canvasElement.style.maxHeight = "250px";
+        this.canvasElement.style.width = "250px";
+        this.canvasElement.style.height = "250px";
+        this.canvasElement.style.position = "absolute";
+        this.canvasElement.style.top = "0";
+        this.canvasElement.style.right = "0";
+        this.container.appendChild(this.canvasElement);
         this.gl = this.canvasElement.getContext("webgl");
         this.vertCode = `
         attribute vec4 pos;
@@ -29,17 +52,6 @@ void main() {
         this.programInfo = twgl.createProgramInfo(this.gl, [this.vertCode, this.fragCode]);
         this.bufferInfo = twgl.createBufferInfoFromArrays(this.gl, arrays);
         requestAnimationFrame(this.renderLoop.bind(this));
-
-        this.editorElement = document.createElement('div');
-        this.editorElement.style.width = "100%";
-        this.editorElement.style.height = "400px";
-        this.element.appendChild(this.editorElement);
-        this.editor = CodeMirror(this.editorElement, {
-            lineNumbers: true,
-            theme: "base16-light",
-            mode: 'x-shader/x-fragment'
-        });
-        this.editor.setValue(code.trim());
     }
 
     renderLoop(time) {
