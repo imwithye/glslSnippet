@@ -1,4 +1,5 @@
 require('codemirror/mode/css/css');
+require('codemirror/mode/clike/clike.js');
 const CodeMirror = require('codemirror');
 
 class Snippet {
@@ -9,7 +10,12 @@ class Snippet {
         this.editorElement.style.width = "100%";
         this.editorElement.style.height = "400px";
         this.element.appendChild(this.editorElement);
-        CodeMirror(this.editorElement, {});
+        this.editor = CodeMirror(this.editorElement, {
+            lineNumbers: true,
+            theme: "base16-light",
+            mode: 'x-shader/x-fragment'
+        });
+        this.editor.setValue(code.trim());
     }
 }
 

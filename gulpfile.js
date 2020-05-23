@@ -8,25 +8,55 @@ const header = require('gulp-header');
 const stripComments = require('gulp-strip-comments');
 const jsbeautifier = require('gulp-jsbeautifier');
 const uglify = require('gulp-uglify-es').default;
+const uglifycss = require('gulp-uglifycss');
+const gulpless = require('gulp-less');
+const autoprefixer = require('autoprefixer');
+const postcss = require('gulp-postcss');
+const cssimport = require('postcss-import');
+const merge = require('merge-stream');
 const pkg = require('./package.json');
 
-gulp.task('build', () => browserify('./src/index.js', { standalone: 'glslSnippet' })
-    .bundle()
-    .pipe(source('glslSnippet.js'))
-    .pipe(buffer())
-    .pipe(stripComments())
-    .pipe(header(fs.readFileSync('./src/browser-header.txt', 'utf8'), { pkg: pkg }))
-    .pipe(gulp.dest('./dist'))
-    .on('error', console.error));
+gulp.task('build', () => {
+    const scriptsTask = browserify('./src/glslSnippet.js', { standalone: 'glslSnippet' })
+        .bundle()
+        .pipe(source('glslSnippet.js'))
+        .pipe(buffer())
+        .pipe(stripComments())
+        .pipe(header(fs.readFileSync('./src/browser-header.txt', 'utf8'), { pkg: pkg }))
+        .pipe(gulp.dest('./dist'))
+        .on('error', console.error);
+
+    const plugins = [
+        cssimport,
+        autoprefixer({ browsers: ['last 2 versions', 'IE >= 11'] }),
+    ];
+    const stylesTask = gulp.src('src/glslSnippet.less')
+        .pipe(gulpless())
+        .pipe(postcss(plugins))
+        .pipe(header(fs.readFileSync('./src/browser-header.txt', 'utf8'), { pkg: pkg }))
+        .pipe(gulp.dest('./dist'))
+        .on('error', console.error);
+    return merge(scriptsTask, stylesTask);
+});
 
 /// Minify the build script, after building it
-gulp.task('minify', () => gulp.src('dist/glslSnippet.js')
-    .pipe(stripComments())
-    .pipe(uglify())
-    .pipe(rename('glslSnippet.min.js'))
-    .pipe(header(fs.readFileSync('./src/browser-header.txt', 'utf8'), { pkg: pkg }))
-    .pipe(gulp.dest('./dist'))
-    .on('error', console.error));
+gulp.task('minify', () => {
+    const scriptsTask = gulp.src('dist/glslSnippet.js')
+        .pipe(stripComments())
+        .pipe(uglify())
+        .pipe(rename('glslSnippet.min.js'))
+        .pipe(header(fs.readFileSync('./src/browser-header.txt', 'utf8'), { pkg: pkg }))
+        .pipe(gulp.dest('./dist'))
+        .on('error', console.error);
+
+    const stylesTask = gulp.src('dist/glslSnippet.css')
+        .pipe(uglifycss())
+        .pipe(rename('glslSnippet.min.css'))
+        .pipe(header(fs.readFileSync('./src/browser-header.txt', 'utf8'), { pkg: pkg }))
+        .pipe(gulp.dest('./dist'))
+        .on('error', console.error);
+    return merge(scriptsTask, stylesTask);
+});
 
 /// Beautify source code
 /// Use before merge request
@@ -43,7 +73,7 @@ gulp.task('beautify', () => gulp.src(['src/**/*.js'])
 
 // Rerun the task when a file changes
 gulp.task('watch', () => {
-    gulp.watch('src/**/*.js', gulp.series('build'));
+    gulp.watch(['src/**/*.js', 'src/**/*.less'], gulp.series('build'));
 });
 
 gulp.task('watch', gulp.series('build', 'watch'));

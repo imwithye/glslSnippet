@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>GLSL Snippet</title>
+    <link rel="stylesheet" href="./dist/glslSnippet.css" />
     <script src="./dist/glslSnippet.js"></script>
     <style>
       .container {
@@ -14,11 +15,15 @@
 
   <body>
     <div class="container">
-      <div id="snippet"></div>
+      <div id="snippet">
+          void FragColor() {
+              
+          }
+      </div>
     </div>
 
     <script>
-        const editor = glslSnippet.edit(document.getElementById("snippet"));
+      const editor = glslSnippet.edit(document.getElementById("snippet"));
     </script>
   </body>
 </html>
