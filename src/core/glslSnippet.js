@@ -12,7 +12,7 @@ class Snippet {
         this.container.classList.add("glslSnippet-container");
         this.element.appendChild(this.container);
         this.editor = new Editor(this.container, code);
-        this.canvas = new Canvas(this.container);
+        this.canvas = new Canvas(this.container, code);
         this.editor.on('cursorActivity', e => {
             const height = e.heightAtLine(e.getCursor().line + 1, 'local') - this.canvas.element.clientHeight;
             this.canvas.setTop(height);

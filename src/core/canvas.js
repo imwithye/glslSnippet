@@ -23,14 +23,14 @@ void main() {
 `;
 
 class Canvas {
-    constructor(container) {
+    constructor(container, code) {
         this.element = document.createElement('canvas');
         this.element.classList.add('glslSnippet-canvas');
         container.appendChild(this.element);
 
         this.render = true;
         this.gl = this.element.getContext("webgl");
-        this.programInfo = twgl.createProgramInfo(this.gl, [VertCode, FragCode]);
+        this.setFragmentCode(code);
         this.errorProgramInfo = twgl.createProgramInfo(this.gl, [VertCode, FragCode]);
         this.bufferInfo = twgl.createBufferInfoFromArrays(this.gl, VertBuffer);
     }
