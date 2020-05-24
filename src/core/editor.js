@@ -26,6 +26,7 @@ class Editor {
             indentUnit: 4,
             indentWithTabs: false,
             showCursorWhenSelecting: true,
+            lineWrapping: true,
             viewportMargin: Infinity,
             tabSize: 4,
             lineNumbers: true,
