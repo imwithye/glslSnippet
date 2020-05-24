@@ -20,7 +20,8 @@ class Editor {
         this.editor = ace.edit(this.element);
         this.editor.getSession().setMode('ace/mode/glsl');
         this.editor.setTheme('ace/theme/chrome');
-        this.editor.setFontSize("1rem");
+        this.editor.getSession().setUseWrapMode(true);
+        this.editor.setFontSize("0.8rem");
         this.editor.setOptions({
             autoScrollEditorIntoView: true,
             maxLines: 32

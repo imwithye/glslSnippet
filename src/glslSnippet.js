@@ -6,7 +6,7 @@ function mount(element) {
     return new Snippet(element, code);
 }
 
-(function () {
+(function() {
     const elements = document.getElementsByClassName("glslSnippet");
     for (var i = 0; i < elements.length; i++) {
         mount(elements[i]);

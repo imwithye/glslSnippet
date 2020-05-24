@@ -12,6 +12,9 @@ void main() {
 const FragCodeHeader = `
 precision mediump float;
 
+uniform vec2 iResolution;
+uniform float iTime;
+
 `
 const FragCodeFooter = `
 
@@ -75,10 +78,15 @@ class Canvas {
             return;
         }
         try {
+            const uniforms = {
+                iResolution: [this.gl.canvas.width, this.gl.canvas.height],
+                iTime: time * 0.001,
+            };
             this.gl.viewport(0, 0, this.element.width, this.element.height);
             this.gl.clearColor(0, 0, 0, 1);
             this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT | this.gl.STENCIL_BUFFER_BIT);
             this.gl.useProgram(this.programInfo.program);
+            twgl.setUniforms(this.programInfo, uniforms);
             twgl.setBuffersAndAttributes(this.gl, this.programInfo, this.bufferInfo);
             twgl.drawBufferInfo(this.gl, this.bufferInfo);
         } catch (e) {
