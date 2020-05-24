@@ -6,7 +6,7 @@ const buffer = require('vinyl-buffer');
 const browserify = require('browserify');
 const header = require('gulp-header');
 const stripComments = require('gulp-strip-comments');
-const jsbeautifier = require('gulp-jsbeautifier');
+const prettier = require('gulp-prettier');
 const uglify = require('gulp-uglify-es').default;
 const uglifycss = require('gulp-uglifycss');
 const gulpless = require('gulp-less');
@@ -61,12 +61,8 @@ gulp.task('minify', () => {
 /// Beautify source code
 /// Use before merge request
 gulp.task('beautify', () => gulp.src(['src/**/*.js'])
-    .pipe(jsbeautifier({
-        indent_size: 4,
-        indent_char: ' ',
-        indent_with_tabs: false,
-        eol: '\n',
-        brace_style: 'preserve-inline',
+    .pipe(prettier({
+        singleQuote: true
     }))
     .pipe(gulp.dest('src'))
 );

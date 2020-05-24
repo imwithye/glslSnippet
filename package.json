@@ -18,6 +18,7 @@
     "gulp-jsbeautifier": "^3.0.1",
     "gulp-less": "^4.0.1",
     "gulp-postcss": "^8.0.0",
+    "gulp-prettier": "^3.0.0",
     "gulp-rename": "^2.0.0",
     "gulp-strip-comments": "^2.5.2",
     "gulp-uglify-es": "^2.0.0",
