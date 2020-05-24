@@ -1,9 +1,16 @@
 const Snippet = require("./core/glslSnippet");
 
-function edit(element) {
+function mount(element) {
     const code = element.innerText;
     element.innerHTML = "";
     return new Snippet(element, code);
 }
 
-module.exports = { edit };
+(function () {
+    const elements = document.getElementsByTagName("glslSnippet");
+    for (var i = 0; i < elements.length; i++) {
+        mount(elements[i]);
+    }
+})();
+
+module.exports = { mount };
