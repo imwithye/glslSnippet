@@ -1,40 +1,22 @@
-require('codemirror/addon/search/search');
-require('codemirror/addon/search/searchcursor');
-require('codemirror/addon/comment/comment');
-require('codemirror/addon/dialog/dialog');
-require('codemirror/addon/edit/matchbrackets');
-require('codemirror/addon/edit/closebrackets');
-require('codemirror/addon/wrap/hardwrap');
-require('codemirror/addon/fold/foldcode');
-require('codemirror/addon/fold/foldgutter');
-require('codemirror/addon/fold/indent-fold');
-require('codemirror/addon/hint/show-hint');
-require('codemirror/addon/hint/javascript-hint');
-require('codemirror/addon/display/rulers');
-require('codemirror/addon/display/panel');
-require('codemirror/mode/clike/clike.js');
-const CodeMirror = require('codemirror');
+const ace = require('brace');
+require('brace/mode/glsl');
+require('brace/theme/solarized_light');
 
 class Editor {
     constructor(container, code, options) {
         this.element = document.createElement('div');
         this.element.classList.add("glslSnippet-editor");
         container.appendChild(this.element);
-        this.editor = CodeMirror(this.element, {
-            matchBrackets: true,
-            autoCloseBrackets: true,
-            indentUnit: 4,
-            indentWithTabs: false,
-            showCursorWhenSelecting: true,
-            lineWrapping: true,
-            viewportMargin: Infinity,
-            tabSize: 4,
-            lineNumbers: true,
-            theme: "base16-light",
-            mode: 'x-shader/x-fragment',
-            dragDrop: false,
+        this.editor = ace.edit(this.element);
+        this.editor.getSession().setMode('ace/mode/glsl');
+        this.editor.setTheme('ace/theme/solarized_light');
+        this.editor.setFontSize("16px");
+        this.editor.setOptions({
+            autoScrollEditorIntoView: true,
+            maxLines: 64
         });
-        this.editor.setValue(code.trim());
+        this.editor.renderer.setScrollMargin(10, 10, 10, 10);
+        this.setValue(`${code.trim()}\n`);
     }
 
     on(eventName, handler) {
@@ -50,11 +32,11 @@ class Editor {
     }
 
     getValue() {
-        return this.editor.getValue();
+        return this.editor.session.getValue();
     }
 
     setValue(content) {
-        this.editor.setValue(content);
+        this.editor.setValue(content, 1);
     }
 }
 

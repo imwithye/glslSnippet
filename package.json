@@ -28,7 +28,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
-    "codemirror": "^5.54.0",
+    "brace": "^0.11.1",
     "twgl.js": "^4.15.0"
   }
 }
