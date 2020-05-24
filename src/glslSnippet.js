@@ -7,7 +7,7 @@ function mount(element) {
 }
 
 (function () {
-    const elements = document.getElementsByTagName("glslSnippet");
+    const elements = document.getElementsByClassName("glslSnippet");
     for (var i = 0; i < elements.length; i++) {
         mount(elements[i]);
     }
