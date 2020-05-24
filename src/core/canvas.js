@@ -1,7 +1,4 @@
 const twgl = require('twgl.js/dist/4.x/twgl-full');
-const ace = require('brace');
-require('brace/mode/glsl');
-require('brace/theme/chrome');
 
 const VertBuffer = { pos: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0] };
 const VertCode = `
@@ -19,36 +16,18 @@ uniform float iTime;
 const FragCodeFooter = `
 
 void main() {
-    gl_FragColor = FragColor();
+    vec4 fragColor = vec4(0, 0, 0, 1);
+    vec2 fragCoord = gl_FragCoord.xy;
+    mainImage(fragColor, fragCoord);
+    gl_FragColor = fragColor;
 }
 `;
 
 class Canvas {
     constructor(container, code) {
-        this.section = document.createElement("div");
-        this.section.classList.add("glslSnippet-section");
-        container.appendChild(this.section);
-
-        const title = document.createElement("div");
-        this.section.classList.add("glslSnippet-title");
-        title.innerHTML = "Graph";
-        this.section.appendChild(title);
-
-        const div = document.createElement('div');
-        div.classList.add('glslSnippet-canvas');
-        this.section.appendChild(div);
-
         this.element = document.createElement('canvas');
-        div.appendChild(this.element);
-
-        this.errorMessage = document.createElement('div');
-        this.errorMessage.style.display = "none";
-        this.errorMessageEditor = ace.edit(this.errorMessage);
-        this.errorMessageEditor.renderer.setShowGutter(false);
-        this.errorMessageEditor.setShowPrintMargin(false);
-        this.errorMessageEditor.setReadOnly(true);
-        this.errorMessageEditor.getSession().setUseWrapMode(true);
-        div.appendChild(this.errorMessage);
+        this.element.classList.add('glslSnippet-canvas');
+        container.appendChild(this.element);
 
         this.render = true;
         this.gl = this.element.getContext("webgl");
@@ -58,15 +37,10 @@ class Canvas {
 
     setFragmentCode(fragCode) {
         fragCode = `${FragCodeHeader}${fragCode}${FragCodeFooter}`;
-        var msg = ""
-        const programInfo = twgl.createProgramInfo(this.gl, [VertCode, fragCode], [], (err) => msg = err);
+        const programInfo = twgl.createProgramInfo(this.gl, [VertCode, fragCode]);
         if (programInfo != null) {
             this.programInfo = programInfo;
-            this.errorMessage.style.display = "none";
-            return;
         }
-        this.errorMessage.style.display = "block";
-        this.errorMessageEditor.setValue(msg.trim(), -1);
     }
 
     setTop(height) {

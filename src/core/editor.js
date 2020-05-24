@@ -1,30 +1,28 @@
 const ace = require('brace');
 require('brace/mode/glsl');
-require('brace/theme/chrome');
+require('brace/theme/eclipse');
 
 class Editor {
     constructor(container, code, options) {
-        this.section = document.createElement("div");
-        this.section.classList.add("glslSnippet-section");
-        container.appendChild(this.section);
-
-        const title = document.createElement("div");
-        this.section.classList.add("glslSnippet-title");
-        title.innerHTML = "Shader";
-        this.section.appendChild(title);
-
         this.element = document.createElement('div');
         this.element.classList.add("glslSnippet-editor");
-        this.section.appendChild(this.element);
+        container.appendChild(this.element);
 
         this.editor = ace.edit(this.element);
         this.editor.getSession().setMode('ace/mode/glsl');
-        this.editor.setTheme('ace/theme/chrome');
+        this.editor.setTheme('ace/theme/eclipse');
         this.editor.setFontSize("0.8rem");
+        this.editor.setShowPrintMargin(false);
+        this.editor.setHighlightActiveLine(false);
+        this.editor.getSession().setUseWrapMode(true);
+        this.editor.getSession().setTabSize(4);
+        this.editor.getSession().setUseSoftTabs(true);
         this.editor.setOptions({
+            cursorStyle: "slim",
             autoScrollEditorIntoView: true,
             maxLines: 32
         });
+        
         this.setValue(`${code.trim()}\n`);
     }
 

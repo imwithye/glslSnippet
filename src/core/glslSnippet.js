@@ -5,14 +5,8 @@ const { Control } = require('./control');
 class Snippet {
     constructor(element, code) {
         this.element = element;
-
-        // this.control = new Control(this.element);
-
-        this.container = document.createElement('div');
-        this.container.classList.add("glslSnippet-container");
-        this.element.appendChild(this.container);
-        this.editor = new Editor(this.container, code);
-        this.canvas = new Canvas(this.container, code);
+        this.editor = new Editor(this.element, code);
+        this.canvas = new Canvas(this.element, code);
 
         this.editor.on('change', () => {
             this.canvas.setFragmentCode(this.editor.getValue());
