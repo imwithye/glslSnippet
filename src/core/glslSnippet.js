@@ -12,12 +12,25 @@ class Snippet {
       this.canvas.setFragmentCode(this.editor.getValue());
     });
 
-    requestAnimationFrame(this.draw.bind(this));
+    this.time = 0;
+    requestAnimationFrame(this.render.bind(this));
   }
 
-  draw(time) {
-    this.canvas.draw(time);
-    requestAnimationFrame(this.draw.bind(this));
+  render() {
+    if (this.time == null || this.time <= 0) {
+      this.time = performance.now();
+      this.draw(0);
+    } else {
+      const t = performance.now();
+      const deltaTime = t - this.time;
+      this.time += deltaTime;
+      this.draw(deltaTime);
+    }
+    requestAnimationFrame(this.render.bind(this));
+  }
+
+  draw(deltaTime) {
+    this.canvas.draw(deltaTime);
   }
 }
 

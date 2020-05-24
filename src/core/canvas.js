@@ -13,6 +13,8 @@ precision mediump float;
 
 uniform vec2 iResolution;
 uniform float iTime;
+uniform float iTimeDelta;
+uniform float iFrame;
 
 `;
 const FragCodeFooter = `
@@ -32,6 +34,8 @@ class Canvas {
     container.appendChild(this.element);
 
     this.render = true;
+    this.time = 0;
+    this.frame = 0;
     this.gl = this.element.getContext('webgl');
     this.setFragmentCode(code);
     this.bufferInfo = twgl.createBufferInfoFromArrays(this.gl, VertBuffer);
@@ -49,15 +53,19 @@ class Canvas {
     this.element.style.top = height < 0 ? '0px' : `${height}px`;
   }
 
-  draw(time) {
+  draw(deltaTime) {
     if (!this.render) {
       return;
     }
     try {
+      this.time = this.time + deltaTime;
       const uniforms = {
         iResolution: [this.gl.canvas.width, this.gl.canvas.height],
-        iTime: time * 0.001,
+        iTime: this.time / 1000,
+        iTimeDelta: deltaTime / 1000,
+        iFrame: this.frame,
       };
+      this.frame += 1;
       this.gl.viewport(0, 0, this.element.width, this.element.height);
       this.gl.clearColor(0, 0, 0, 1);
       this.gl.clear(
