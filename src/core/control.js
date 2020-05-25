@@ -11,6 +11,11 @@ class Control {
 
     this.rewind = document.createElement('img');
     this.rewind.src = RewindDataURI;
+    this.rewind.onclick = () => {
+      if (this.handlers["rewind"]) {
+        this.handlers["rewind"]();
+      }
+    }
     this.element.appendChild(this.rewind);
 
     this.play = document.createElement('img');

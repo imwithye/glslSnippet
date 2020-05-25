@@ -38,6 +38,7 @@ class Canvas {
     this.element.appendChild(this.canvas);
 
     this.control = new Control(this.element);
+    this.control.on("rewind", () => { this.time = 0; this.frame = 0; });
     this.control.on("play", () => { this.render = true });
     this.control.on("pause", () => { this.render = false });
 
@@ -59,7 +60,8 @@ class Canvas {
 
   draw(deltaTime) {
     if (!this.render) {
-      this.control.setFPS(0);
+      this.control.setTime(this.time / 1000);
+      this.control.setFPS(1000 / deltaTime);
       return;
     }
     try {
