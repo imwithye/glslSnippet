@@ -15,10 +15,25 @@ class Control {
 
     this.play = document.createElement('img');
     this.play.src = PlayDataURI;
+    this.play.hidden = true;
+    this.play.onclick = () => {
+      this.play.hidden = true;
+      this.pause.hidden = false;
+      if (this.handlers["play"]) {
+        this.handlers["play"]();
+      }
+    }
     this.element.appendChild(this.play);
 
     this.pause = document.createElement('img');
     this.pause.src = PauseDataURI;
+    this.pause.onclick = () => {
+      this.pause.hidden = true;
+      this.play.hidden = false;
+      if (this.handlers["pause"]) {
+        this.handlers["pause"]();
+      }
+    }
     this.element.appendChild(this.pause);
 
     this.time = document.createElement("div");
@@ -33,6 +48,8 @@ class Control {
     this.fullScreen.src = FullScreenDataURI;
     this.fullScreen.style.marginLeft = "auto";
     this.element.appendChild(this.fullScreen);
+
+    this.handlers = {};
   }
 
   setTime(time) {
@@ -41,6 +58,10 @@ class Control {
 
   setFPS(fps) {
     this.fps.innerHTML = `${Math.floor(fps)} fps`;
+  }
+
+  on(eventName, handler) {
+    this.handlers[eventName] = handler;
   }
 }
 

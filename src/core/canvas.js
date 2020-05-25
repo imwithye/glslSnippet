@@ -38,6 +38,8 @@ class Canvas {
     this.element.appendChild(this.canvas);
 
     this.control = new Control(this.element);
+    this.control.on("play", () => { this.render = true });
+    this.control.on("pause", () => { this.render = false });
 
     this.render = true;
     this.time = 0;
@@ -75,8 +77,8 @@ class Canvas {
       this.gl.clearColor(0, 0, 0, 1);
       this.gl.clear(
         this.gl.COLOR_BUFFER_BIT |
-          this.gl.DEPTH_BUFFER_BIT |
-          this.gl.STENCIL_BUFFER_BIT
+        this.gl.DEPTH_BUFFER_BIT |
+        this.gl.STENCIL_BUFFER_BIT
       );
       this.gl.useProgram(this.programInfo.program);
       twgl.setUniforms(this.programInfo, uniforms);
