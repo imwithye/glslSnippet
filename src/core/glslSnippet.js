@@ -1,5 +1,6 @@
 const { Editor } = require('./editor');
 const { Canvas } = require('./canvas');
+const { debounce } = require('../util');
 
 class Snippet {
   constructor(element, code) {
@@ -7,14 +8,17 @@ class Snippet {
     this.editor = new Editor(this.element, code);
     this.canvas = new Canvas(this.element, code);
 
-    this.editor.on('change', () => {
-      const errors = this.canvas.setFragmentCode(this.editor.getValue());
-      if (errors.length == 0) {
-        this.editor.clearErrors();
-        return;
-      }
-      this.editor.setErrors(errors);
-    });
+    this.editor.on(
+      'change',
+      debounce(() => {
+        const errors = this.canvas.setFragmentCode(this.editor.getValue());
+        if (errors.length == 0) {
+          this.editor.clearErrors();
+          return;
+        }
+        this.editor.setErrors(errors);
+      }, 1000)
+    );
 
     this.time = 0;
     requestAnimationFrame(this.render.bind(this));
