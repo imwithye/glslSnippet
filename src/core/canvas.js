@@ -57,10 +57,13 @@ class Canvas {
 
   draw(deltaTime) {
     if (!this.render) {
+      this.control.setFPS(0);
       return;
     }
     try {
       this.time = this.time + deltaTime;
+      this.control.setTime(this.time / 1000);
+      this.control.setFPS(1000 / deltaTime);
       const uniforms = {
         iResolution: [this.gl.canvas.width, this.gl.canvas.height],
         iTime: this.time / 1000,
