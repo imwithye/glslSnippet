@@ -23,6 +23,7 @@ uniform vec2 iResolution;
 uniform float iTime;
 uniform float iTimeDelta;
 uniform float iFrame;
+uniform vec4 iMouse;
 
 `;
 const FragCodeFooter = `
@@ -42,24 +43,18 @@ class Canvas {
     container.appendChild(this.element);
 
     this.canvas = document.createElement('canvas');
+    this.canvas.addEventListener('mousemove', this.mousemove.bind(this));
     this.element.appendChild(this.canvas);
 
     this.control = new Control(this.element);
-    this.control.on('rewind', () => {
-      this.time = 0;
-      this.frame = 0;
-      this.drawToCanvas(0);
-    });
-    this.control.on('play', () => {
-      this.render = true;
-    });
-    this.control.on('pause', () => {
-      this.render = false;
-    });
+    this.control.on('rewind', this.rewind.bind(this));
+    this.control.on('play', this.play.bind(this));
+    this.control.on('pause', this.pause.bind(this));
 
     this.render = true;
     this.time = 0;
     this.frame = 0;
+    this.mousePosition = { x: 0, y: 0 };
     this.gl = this.canvas.getContext('webgl');
     this.programInfoError = twgl.createProgramInfo(this.gl, [
       VertCode,
@@ -67,6 +62,28 @@ class Canvas {
     ]);
     this.setFragmentCode(code);
     this.bufferInfo = twgl.createBufferInfoFromArrays(this.gl, VertBuffer);
+  }
+
+  mousemove(evt) {
+    const rect = this.canvas.getBoundingClientRect();
+    this.mousePosition = {
+      x: evt.clientX - rect.left,
+      y: this.canvas.clientHeight - evt.clientY + rect.top
+    };
+  }
+
+  rewind() {
+    this.time = 0;
+    this.frame = 0;
+    this.drawToCanvas(0);
+  }
+
+  play() {
+    this.render = true;
+  }
+
+  pause() {
+    this.render = false;
   }
 
   setFragmentCode(fragCode) {
@@ -87,7 +104,7 @@ class Canvas {
     for (var i = 0; i < errorStrs.length; i++) {
       const digits = errorStrs[i].match(/\d+:\d+/g);
       if (digits.length < 1) continue;
-      const lineno = digits[0].split(':')[1] - headerLines;
+      const lineno = digits[0].split(':')[1] - headerLines + 1;
       const errMsg = errorStrs[i].replace(/ERROR: \d+:\d+: /g, '');
       errors.push({ lineno: lineno, errMsg: errMsg });
     }
@@ -117,14 +134,15 @@ class Canvas {
       iTime: this.time / 1000,
       iTimeDelta: deltaTime / 1000,
       iFrame: this.frame,
+      iMouse: [this.mousePosition.x, this.mousePosition.y, 0, 0],
     };
     this.frame += 1;
     this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     this.gl.clearColor(0, 0, 0, 1);
     this.gl.clear(
       this.gl.COLOR_BUFFER_BIT |
-        this.gl.DEPTH_BUFFER_BIT |
-        this.gl.STENCIL_BUFFER_BIT
+      this.gl.DEPTH_BUFFER_BIT |
+      this.gl.STENCIL_BUFFER_BIT
     );
     const programInfo =
       this.programInfo == null ? this.programInfoError : this.programInfo;
