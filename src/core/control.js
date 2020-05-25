@@ -49,11 +49,6 @@ class Control {
     this.fps.innerHTML = "0.00 fps";
     this.element.appendChild(this.fps);
 
-    this.fullScreen = document.createElement('img');
-    this.fullScreen.src = FullScreenDataURI;
-    this.fullScreen.style.marginLeft = "auto";
-    this.element.appendChild(this.fullScreen);
-
     this.handlers = {};
   }
 
