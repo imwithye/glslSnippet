@@ -113,9 +113,9 @@ class Canvas {
       for (var i = 0; i < errorStrs.length; i++) {
         const digits = errorStrs[i].match(/\d+:\d+/g);
         if (digits.length < 1) continue;
-        const lineno = digits[0].split(':')[1] - headerLines + 1;
+        const lineno = digits[0].split(':')[1] - headerLines;
         const errMsg = errorStrs[i].replace(/ERROR: \d+:\d+: /g, '');
-        errors.push({ lineno: lineno, errMsg: errMsg });
+        errors.push({ lineno: lineno <= 1 ? 1 : lineno, errMsg: errMsg });
       }
       console.error(errMsgs);
       return errors;

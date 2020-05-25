@@ -39,10 +39,14 @@ class Editor {
   }
 
   setErrors(errors) {
+    const rowLength = this.editor.getSession().getLength();
     this.editor.getSession().setAnnotations(
       errors.map((e) => {
+        let row = e.lineno;
+        if (row > rowLength) row = rowLength - 1;
+        console.log(row);
         return {
-          row: e.lineno - 1,
+          row: row,
           column: 0,
           text: e.errMsg,
           type: 'error',
