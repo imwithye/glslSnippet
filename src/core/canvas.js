@@ -9,6 +9,13 @@ attribute vec4 pos;
 void main() { 
     gl_Position = pos;
 }`;
+const FragCodeError = `
+precision mediump float;
+
+void main() {
+  gl_FragColor = vec4(1, 0, 1, 1);
+}
+`;
 const FragCodeHeader = `
 precision mediump float;
 
@@ -54,6 +61,10 @@ class Canvas {
     this.time = 0;
     this.frame = 0;
     this.gl = this.canvas.getContext('webgl');
+    this.programInfoError = twgl.createProgramInfo(this.gl, [
+      VertCode,
+      FragCodeError,
+    ]);
     this.setFragmentCode(code);
     this.bufferInfo = twgl.createBufferInfoFromArrays(this.gl, VertBuffer);
   }
@@ -61,14 +72,13 @@ class Canvas {
   setFragmentCode(fragCode) {
     fragCode = `${FragCodeHeader}${fragCode}${FragCodeFooter}`;
     let errMsgs = '';
-    const programInfo = twgl.createProgramInfo(
+    this.programInfo = twgl.createProgramInfo(
       this.gl,
       [VertCode, fragCode],
       [],
       (msg) => (errMsgs = msg)
     );
-    if (programInfo != null) {
-      this.programInfo = programInfo;
+    if (this.programInfo != null) {
       return [];
     }
     const headerLines = FragCodeHeader.split('\n').length - 1;
@@ -116,9 +126,11 @@ class Canvas {
         this.gl.DEPTH_BUFFER_BIT |
         this.gl.STENCIL_BUFFER_BIT
     );
-    this.gl.useProgram(this.programInfo.program);
-    twgl.setUniforms(this.programInfo, uniforms);
-    twgl.setBuffersAndAttributes(this.gl, this.programInfo, this.bufferInfo);
+    const programInfo =
+      this.programInfo == null ? this.programInfoError : this.programInfo;
+    this.gl.useProgram(programInfo.program);
+    twgl.setUniforms(programInfo, uniforms);
+    twgl.setBuffersAndAttributes(this.gl, programInfo, this.bufferInfo);
     twgl.drawBufferInfo(this.gl, this.bufferInfo);
   }
 }
