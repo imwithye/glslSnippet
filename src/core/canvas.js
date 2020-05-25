@@ -5,19 +5,28 @@ const VertBuffer = {
   pos: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
 };
 const VertCode = `
-attribute vec4 pos;
+#version 300 es
+
+layout(location = 0) in vec4 pos;
+
 void main() { 
     gl_Position = pos;
 }`;
 const FragCodeError = `
-precision mediump float;
+#version 300 es
+
+precision highp float;
+
+out vec4 FragColor;
 
 void main() {
-  gl_FragColor = vec4(1, 0, 1, 1);
+  FragColor = vec4(1, 0, 1, 1);
 }
 `;
 const FragCodeHeader = `
-precision mediump float;
+#version 300 es
+
+precision highp float;
 
 uniform vec2 iResolution;
 uniform float iTime;
@@ -25,14 +34,13 @@ uniform float iTimeDelta;
 uniform float iFrame;
 uniform vec4 iMouse;
 
+out vec4 FragColor;
+
 `;
 const FragCodeFooter = `
 
 void main() {
-    vec4 fragColor = vec4(0, 0, 0, 1);
-    vec2 fragCoord = gl_FragCoord.xy;
-    mainImage(fragColor, fragCoord);
-    gl_FragColor = fragColor;
+    mainImage(FragColor, gl_FragCoord.xy);
 }
 `;
 
@@ -55,7 +63,7 @@ class Canvas {
     this.time = 0;
     this.frame = 0;
     this.mousePosition = { x: 0, y: 0 };
-    this.gl = this.canvas.getContext('webgl');
+    this.gl = this.canvas.getContext('webgl2');
     this.programInfoError = twgl.createProgramInfo(this.gl, [
       VertCode,
       FragCodeError,
@@ -98,18 +106,23 @@ class Canvas {
     if (this.programInfo != null) {
       return [];
     }
-    const headerLines = FragCodeHeader.split('\n').length - 1;
-    const errors = [];
-    const errorStrs = errMsgs.match(/ERROR: \d+:\d+: .+/g);
-    for (var i = 0; i < errorStrs.length; i++) {
-      const digits = errorStrs[i].match(/\d+:\d+/g);
-      if (digits.length < 1) continue;
-      const lineno = digits[0].split(':')[1] - headerLines + 1;
-      const errMsg = errorStrs[i].replace(/ERROR: \d+:\d+: /g, '');
-      errors.push({ lineno: lineno, errMsg: errMsg });
+    try {
+      const headerLines = FragCodeHeader.split('\n').length - 1;
+      const errors = [];
+      const errorStrs = errMsgs.match(/ERROR: \d+:\d+: .+/g);
+      for (var i = 0; i < errorStrs.length; i++) {
+        const digits = errorStrs[i].match(/\d+:\d+/g);
+        if (digits.length < 1) continue;
+        const lineno = digits[0].split(':')[1] - headerLines + 1;
+        const errMsg = errorStrs[i].replace(/ERROR: \d+:\d+: /g, '');
+        errors.push({ lineno: lineno, errMsg: errMsg });
+      }
+      console.error(errMsgs);
+      return errors;
+    } catch {
+      console.error(errMsgs);
+      return [{ lineno: 0, errMsg: 'Unknown error, check your console.' }];
     }
-    console.error(errMsgs);
-    return errors;
   }
 
   draw(deltaTime) {
