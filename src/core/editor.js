@@ -37,6 +37,23 @@ class Editor {
   setValue(content) {
     this.editor.setValue(content, 1);
   }
+
+  setErrors(errors) {
+    this.editor.getSession().setAnnotations(
+      errors.map((e) => {
+        return {
+          row: e.lineno - 1,
+          column: 0,
+          text: e.errMsg,
+          type: 'error',
+        };
+      })
+    );
+  }
+
+  clearErrors() {
+    this.editor.getSession().clearAnnotations();
+  }
 }
 
 module.exports = { Editor };

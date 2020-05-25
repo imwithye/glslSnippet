@@ -60,10 +60,29 @@ class Canvas {
 
   setFragmentCode(fragCode) {
     fragCode = `${FragCodeHeader}${fragCode}${FragCodeFooter}`;
-    const programInfo = twgl.createProgramInfo(this.gl, [VertCode, fragCode]);
+    let errMsgs = '';
+    const programInfo = twgl.createProgramInfo(
+      this.gl,
+      [VertCode, fragCode],
+      [],
+      (msg) => (errMsgs = msg)
+    );
     if (programInfo != null) {
       this.programInfo = programInfo;
+      return [];
     }
+    const headerLines = FragCodeHeader.split('\n').length - 1;
+    const errors = [];
+    const errorStrs = errMsgs.match(/ERROR: \d+:\d+: .+/g);
+    for (var i = 0; i < errorStrs.length; i++) {
+      const digits = errorStrs[i].match(/\d+:\d+/g);
+      if (digits.length < 1) continue;
+      const lineno = digits[0].split(':')[1] - headerLines;
+      const errMsg = errorStrs[i].replace(/ERROR: \d+:\d+: /g, '');
+      errors.push({ lineno: lineno, errMsg: errMsg });
+    }
+    console.error(errMsgs);
+    return errors;
   }
 
   draw(deltaTime) {

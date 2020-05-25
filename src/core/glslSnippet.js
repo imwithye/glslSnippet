@@ -8,7 +8,12 @@ class Snippet {
     this.canvas = new Canvas(this.element, code);
 
     this.editor.on('change', () => {
-      this.canvas.setFragmentCode(this.editor.getValue());
+      const errors = this.canvas.setFragmentCode(this.editor.getValue());
+      if (errors.length == 0) {
+        this.editor.clearErrors();
+        return;
+      }
+      this.editor.setErrors(errors);
     });
 
     this.time = 0;
