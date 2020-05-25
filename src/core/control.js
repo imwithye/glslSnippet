@@ -12,10 +12,10 @@ class Control {
     this.rewind = document.createElement('img');
     this.rewind.src = RewindDataURI;
     this.rewind.onclick = () => {
-      if (this.handlers["rewind"]) {
-        this.handlers["rewind"]();
+      if (this.handlers['rewind']) {
+        this.handlers['rewind']();
       }
-    }
+    };
     this.element.appendChild(this.rewind);
 
     this.play = document.createElement('img');
@@ -24,10 +24,10 @@ class Control {
     this.play.onclick = () => {
       this.play.hidden = true;
       this.pause.hidden = false;
-      if (this.handlers["play"]) {
-        this.handlers["play"]();
+      if (this.handlers['play']) {
+        this.handlers['play']();
       }
-    }
+    };
     this.element.appendChild(this.play);
 
     this.pause = document.createElement('img');
@@ -35,18 +35,18 @@ class Control {
     this.pause.onclick = () => {
       this.pause.hidden = true;
       this.play.hidden = false;
-      if (this.handlers["pause"]) {
-        this.handlers["pause"]();
+      if (this.handlers['pause']) {
+        this.handlers['pause']();
       }
-    }
+    };
     this.element.appendChild(this.pause);
 
-    this.time = document.createElement("div");
-    this.time.innerHTML = "0.00";
+    this.time = document.createElement('div');
+    this.time.innerHTML = '0.00';
     this.element.appendChild(this.time);
 
-    this.fps = document.createElement("div");
-    this.fps.innerHTML = "0.00 fps";
+    this.fps = document.createElement('div');
+    this.fps.innerHTML = '0.00 fps';
     this.element.appendChild(this.fps);
 
     this.handlers = {};
