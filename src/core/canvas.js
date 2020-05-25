@@ -68,7 +68,7 @@ class Canvas {
     const rect = this.canvas.getBoundingClientRect();
     this.mousePosition = {
       x: evt.clientX - rect.left,
-      y: this.canvas.clientHeight - evt.clientY + rect.top
+      y: this.canvas.clientHeight - evt.clientY + rect.top,
     };
   }
 
@@ -141,8 +141,8 @@ class Canvas {
     this.gl.clearColor(0, 0, 0, 1);
     this.gl.clear(
       this.gl.COLOR_BUFFER_BIT |
-      this.gl.DEPTH_BUFFER_BIT |
-      this.gl.STENCIL_BUFFER_BIT
+        this.gl.DEPTH_BUFFER_BIT |
+        this.gl.STENCIL_BUFFER_BIT
     );
     const programInfo =
       this.programInfo == null ? this.programInfoError : this.programInfo;
