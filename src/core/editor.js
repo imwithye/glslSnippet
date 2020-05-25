@@ -1,6 +1,6 @@
-const ace = require('brace');
-require('brace/mode/glsl');
-require('brace/theme/eclipse');
+const ace = require('ace-builds/src-min-noconflict/ace');
+require('ace-builds/src-min-noconflict/mode-glsl');
+require('ace-builds/src-min-noconflict/theme-eclipse');
 
 class Editor {
   constructor(container, code, options) {
