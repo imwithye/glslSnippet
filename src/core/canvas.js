@@ -1,48 +1,17 @@
 const { Control } = require('./control');
 const twgl = require('twgl.js/dist/4.x/twgl-full');
 
-const VertBuffer = {
-  pos: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
-};
-const VertCode = `
-#version 300 es
-
-layout(location = 0) in vec4 pos;
-
-void main() { 
-    gl_Position = pos;
-}`;
-const FragCodeError = `
-#version 300 es
-
-precision highp float;
-
-out vec4 FragColor;
-
-void main() {
-  FragColor = vec4(1, 0, 1, 1);
-}
-`;
-const FragCodeHeader = `
-#version 300 es
-
-precision highp float;
-
-uniform vec2 iResolution;
-uniform float iTime;
-uniform float iTimeDelta;
-uniform float iFrame;
-uniform vec4 iMouse;
-
-out vec4 FragColor;
-
-`;
-const FragCodeFooter = `
-
-void main() {
-    mainImage(FragColor, gl_FragCoord.xy);
-}
-`;
+const {
+  VertBuffer,
+  VertCode,
+  VertCodeGL1,
+  FragCodeError,
+  FragCodeErrorGL1,
+  FragCodeHeader,
+  FragCodeHeaderGL1,
+  FragCodeFooter,
+  FragCodeFooterGL1,
+} = require('./shader');
 
 class Canvas {
   constructor(container, code) {
@@ -64,12 +33,35 @@ class Canvas {
     this.frame = 0;
     this.mousePosition = { x: 0, y: 0 };
     this.gl = this.canvas.getContext('webgl2');
+    if (this.gl != null) {
+      this.gl2 = true;
+    } else {
+      this.gl2 = false;
+      this.gl = this.canvas.getContext('webgl');
+      console.warn('Fallback to WebGL 1');
+    }
     this.programInfoError = twgl.createProgramInfo(this.gl, [
-      VertCode,
-      FragCodeError,
+      this.VertCode,
+      this.FragCodeError,
     ]);
     this.setFragmentCode(code);
     this.bufferInfo = twgl.createBufferInfoFromArrays(this.gl, VertBuffer);
+  }
+
+  get VertCode() {
+    return this.gl2 ? VertCode : VertCodeGL1;
+  }
+
+  get FragCodeError() {
+    return this.gl2 ? FragCodeError : FragCodeErrorGL1;
+  }
+
+  get FragCodeHeader() {
+    return this.gl2 ? FragCodeHeader : FragCodeHeaderGL1;
+  }
+
+  get FragCodeFooter() {
+    return this.gl2 ? FragCodeFooter : FragCodeFooterGL1;
   }
 
   mousemove(evt) {
@@ -95,11 +87,11 @@ class Canvas {
   }
 
   setFragmentCode(fragCode) {
-    fragCode = `${FragCodeHeader}${fragCode}${FragCodeFooter}`;
+    fragCode = `${this.FragCodeHeader}${fragCode}${this.FragCodeFooter}`;
     let errMsgs = '';
     this.programInfo = twgl.createProgramInfo(
       this.gl,
-      [VertCode, fragCode],
+      [this.VertCode, fragCode],
       [],
       (msg) => (errMsgs = msg)
     );
@@ -107,7 +99,7 @@ class Canvas {
       return [];
     }
     try {
-      const headerLines = FragCodeHeader.split('\n').length - 1;
+      const headerLines = this.FragCodeHeader.split('\n').length - 1;
       const errors = [];
       const errorStrs = errMsgs.match(/ERROR: \d+:\d+: .+/g);
       for (var i = 0; i < errorStrs.length; i++) {
