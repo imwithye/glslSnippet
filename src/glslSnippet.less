@@ -1,4 +1,4 @@
-@minHeight: 200px;
+@minHeight: 250px;
 
 .glslSnippet {
   display: flex;
@@ -14,19 +14,24 @@
   margin-top: 0.5rem;
   box-sizing: border-box;
   min-width: 66%;
-  min-height: @minHeight;
+  min-height: calc(@minHeight + 64px);
   background-color: #fefefe !important;
 }
 
 .glslSnippet-canvas {
   margin-top: 0.5rem;
   width: @minHeight;
+}
+
+.glslSnippet-canvas > canvas {
+  width: @minHeight;
   height: @minHeight;
+  vertical-align: middle;
 }
 
 .glslSnippet-control {
   box-sizing: border-box;
-  background-color: #f5f5f5;
+  background-color: #ebebeb;
   width: 100%;
   padding: 0.5rem 1.2rem 0.5rem 1.2rem;
 }

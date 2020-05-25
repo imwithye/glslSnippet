@@ -1,6 +1,5 @@
 const { Editor } = require('./editor');
 const { Canvas } = require('./canvas');
-const { Control } = require('./control');
 
 class Snippet {
   constructor(element, code) {

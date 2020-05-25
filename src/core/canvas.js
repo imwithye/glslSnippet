@@ -1,3 +1,4 @@
+const { Control } = require('./control');
 const twgl = require('twgl.js/dist/4.x/twgl-full');
 
 const VertBuffer = {
@@ -29,14 +30,19 @@ void main() {
 
 class Canvas {
   constructor(container, code) {
-    this.element = document.createElement('canvas');
+    this.element = document.createElement('div');
     this.element.classList.add('glslSnippet-canvas');
     container.appendChild(this.element);
+
+    this.canvas = document.createElement('canvas');
+    this.element.appendChild(this.canvas);
+
+    this.control = new Control(this.element);
 
     this.render = true;
     this.time = 0;
     this.frame = 0;
-    this.gl = this.element.getContext('webgl');
+    this.gl = this.canvas.getContext('webgl');
     this.setFragmentCode(code);
     this.bufferInfo = twgl.createBufferInfoFromArrays(this.gl, VertBuffer);
   }
@@ -47,10 +53,6 @@ class Canvas {
     if (programInfo != null) {
       this.programInfo = programInfo;
     }
-  }
-
-  setTop(height) {
-    this.element.style.top = height < 0 ? '0px' : `${height}px`;
   }
 
   draw(deltaTime) {
@@ -66,7 +68,7 @@ class Canvas {
         iFrame: this.frame,
       };
       this.frame += 1;
-      this.gl.viewport(0, 0, this.element.width, this.element.height);
+      this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
       this.gl.clearColor(0, 0, 0, 1);
       this.gl.clear(
         this.gl.COLOR_BUFFER_BIT |
