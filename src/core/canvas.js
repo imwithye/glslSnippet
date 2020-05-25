@@ -41,6 +41,7 @@ class Canvas {
     this.control.on('rewind', () => {
       this.time = 0;
       this.frame = 0;
+      this.drawToCanvas(0);
     });
     this.control.on('play', () => {
       this.render = true;
@@ -72,30 +73,34 @@ class Canvas {
       return;
     }
     try {
-      this.time = this.time + deltaTime;
-      this.control.setTime(this.time / 1000);
-      this.control.setFPS(1000 / deltaTime);
-      const uniforms = {
-        iResolution: [this.gl.canvas.width, this.gl.canvas.height],
-        iTime: this.time / 1000,
-        iTimeDelta: deltaTime / 1000,
-        iFrame: this.frame,
-      };
-      this.frame += 1;
-      this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-      this.gl.clearColor(0, 0, 0, 1);
-      this.gl.clear(
-        this.gl.COLOR_BUFFER_BIT |
-          this.gl.DEPTH_BUFFER_BIT |
-          this.gl.STENCIL_BUFFER_BIT
-      );
-      this.gl.useProgram(this.programInfo.program);
-      twgl.setUniforms(this.programInfo, uniforms);
-      twgl.setBuffersAndAttributes(this.gl, this.programInfo, this.bufferInfo);
-      twgl.drawBufferInfo(this.gl, this.bufferInfo);
+      this.drawToCanvas(deltaTime);
     } catch (e) {
       console.log(e);
     }
+  }
+
+  drawToCanvas(deltaTime) {
+    this.time = this.time + deltaTime;
+    this.control.setTime(this.time / 1000);
+    this.control.setFPS(1000 / deltaTime);
+    const uniforms = {
+      iResolution: [this.gl.canvas.width, this.gl.canvas.height],
+      iTime: this.time / 1000,
+      iTimeDelta: deltaTime / 1000,
+      iFrame: this.frame,
+    };
+    this.frame += 1;
+    this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+    this.gl.clearColor(0, 0, 0, 1);
+    this.gl.clear(
+      this.gl.COLOR_BUFFER_BIT |
+        this.gl.DEPTH_BUFFER_BIT |
+        this.gl.STENCIL_BUFFER_BIT
+    );
+    this.gl.useProgram(this.programInfo.program);
+    twgl.setUniforms(this.programInfo, uniforms);
+    twgl.setBuffersAndAttributes(this.gl, this.programInfo, this.bufferInfo);
+    twgl.drawBufferInfo(this.gl, this.bufferInfo);
   }
 }
 
