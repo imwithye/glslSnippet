@@ -50,7 +50,7 @@ class SizeParam {
 
 class ParamParser {
   apply(canvas, fragCode) {
-    const regex = /^\/\/\s*[a-zA-Z_]+[a-zA-Z_0-9-]*\s*\:/;
+    const regex = /^\/\/\s*\+[a-zA-Z_]+[a-zA-Z_0-9-]*\s*\:/;
     const paramTokens = fragCode
       .split('\n')
       .map((line, idx) => ({ lineno: idx, code: line.trim() }))
@@ -58,7 +58,7 @@ class ParamParser {
       .map((line) => {
         const name = line.code
           .match(regex)[0]
-          .match(/[a-zA-Z_]+[a-zA-Z0-9_\-]*/)[0];
+          .match(/\+[a-zA-Z_]+[a-zA-Z0-9_\-]*/)[0];
         const code = line.code.replace(regex, '').trim();
         return { name, code, lineno: line.lineno };
       });
@@ -67,7 +67,7 @@ class ParamParser {
     for (let i = 0; i < paramTokens.length; i++) {
       const paramToken = paramTokens[i];
       try {
-        if (paramToken.name == 'Size') {
+        if (paramToken.name == '+Size') {
           const sizeParam = new SizeParam(paramToken.lineno, paramToken.code);
           sizeParam.apply(canvas);
         }
