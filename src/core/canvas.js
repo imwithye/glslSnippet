@@ -1,6 +1,7 @@
 const { Control } = require('./control');
 const twgl = require('twgl.js/dist/4.x/twgl-full');
 
+const { ParamParser } = require('./params');
 const {
   VertBuffer,
   VertCode,
@@ -14,7 +15,7 @@ const {
 } = require('./shader');
 
 class Canvas {
-  constructor(container, code) {
+  constructor(container) {
     this.element = document.createElement('div');
     this.element.classList.add('glslSnippet-canvas');
     container.appendChild(this.element);
@@ -28,6 +29,8 @@ class Canvas {
     this.control.on('play', this.play.bind(this));
     this.control.on('pause', this.pause.bind(this));
 
+    this.params = [];
+    this.paramParser = new ParamParser();
     this.render = true;
     this.time = 0;
     this.frame = 0;
@@ -44,7 +47,6 @@ class Canvas {
       this.VertCode,
       this.FragCodeError,
     ]);
-    this.setFragmentCode(code);
     this.bufferInfo = twgl.createBufferInfoFromArrays(this.gl, VertBuffer);
   }
 
@@ -87,6 +89,12 @@ class Canvas {
   }
 
   setFragmentCode(fragCode) {
+    const { params, errors } = this.paramParser.apply(this, fragCode);
+    if (errors.length > 0) {
+      return errors;
+    }
+    this.params = params;
+
     fragCode = `${this.FragCodeHeader}${fragCode}${this.FragCodeFooter}`;
     let errMsgs = '';
     this.programInfo = twgl.createProgramInfo(
@@ -117,6 +125,10 @@ class Canvas {
     }
   }
 
+  parseParams(fragCode) {
+    const lines = fragCode.split('\n');
+  }
+
   draw(deltaTime) {
     if (!this.render) {
       this.control.setTime(this.time / 1000);
@@ -131,6 +143,10 @@ class Canvas {
   }
 
   drawToCanvas(deltaTime) {
+    for (let i = 0; i < this.params.length; i++) {
+      this.params[i].apply(this);
+    }
+
     this.time = this.time + deltaTime;
     this.control.setTime(this.time / 1000);
     this.control.setFPS(1000 / deltaTime);

@@ -6,22 +6,25 @@ class Snippet {
   constructor(element, code) {
     this.element = element;
     this.editor = new Editor(this.element, code);
-    this.canvas = new Canvas(this.element, code);
+    this.canvas = new Canvas(this.element);
+    this.setFragmentCode(code);
 
     this.editor.on(
       'change',
-      debounce(() => {
-        const errors = this.canvas.setFragmentCode(this.editor.getValue());
-        if (errors.length == 0) {
-          this.editor.clearErrors();
-          return;
-        }
-        this.editor.setErrors(errors);
-      }, 1000)
+      debounce(() => this.setFragmentCode(this.editor.getValue()), 1000)
     );
 
     this.time = 0;
     requestAnimationFrame(this.render.bind(this));
+  }
+
+  setFragmentCode(code) {
+    const errors = this.canvas.setFragmentCode(code);
+    if (errors.length == 0) {
+      this.editor.clearErrors();
+      return;
+    }
+    this.editor.setErrors(errors);
   }
 
   render() {

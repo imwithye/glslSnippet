@@ -44,7 +44,6 @@ class Editor {
       errors.map((e) => {
         let row = e.lineno;
         if (row > rowLength) row = rowLength - 1;
-        console.log(row);
         return {
           row: row,
           column: 0,
