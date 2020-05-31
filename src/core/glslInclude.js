@@ -41,6 +41,41 @@ float _glslSnippet_distanceToLine(vec2 p0, vec2 p1, vec2 p)
     dist = min(dist, _glslSnippet_distanceToLine(p0, p1, p));                     \\
 }
 
+#define _glslSnippet_distanceToInlineFunc(Func, p, dist)                          \\
+{                                                                                 \\
+    float xDelta = iPlot.z * 2. / iResolution.x;                                  \\
+    float offset = xDelta * -2.;                                                  \\
+    float x = p.x + offset;                                                       \\
+    vec2 p0 = vec2(p.x + offset, Func);                                           \\
+    x = p.x + offset + xDelta;                                                    \\
+    vec2 p1 = vec2(p.x + offset + xDelta, Func);                                  \\
+    dist = _glslSnippet_distanceToLine(p0, p1, p);                                \\
+    offset = xDelta * -1.;                                                        \\
+    x = p.x + offset;                                                             \\
+    p0 = vec2(p.x + offset, Func);                                                \\
+    x = p.x + offset + xDelta;                                                    \\
+    p1 = vec2(p.x + offset + xDelta, Func);                                       \\
+    dist = min(dist, _glslSnippet_distanceToLine(p0, p1, p));                     \\
+    offset = xDelta * 0.;                                                         \\
+    x = p.x + offset;                                                             \\
+    p0 = vec2(p.x + offset, Func);                                                \\
+    x = p.x + offset + xDelta;                                                    \\
+    p1 = vec2(p.x + offset + xDelta, Func);                                       \\
+    dist = min(dist, _glslSnippet_distanceToLine(p0, p1, p));                     \\
+    offset = xDelta * 1.;                                                         \\
+    x = p.x + offset;                                                             \\
+    p0 = vec2(p.x + offset, Func);                                                \\
+    x = p.x + offset + xDelta;                                                    \\
+    p1 = vec2(p.x + offset + xDelta, Func);                                       \\
+    dist = min(dist, _glslSnippet_distanceToLine(p0, p1, p));                     \\
+    offset = xDelta * 2.;                                                         \\
+    x = p.x + offset;                                                             \\
+    p0 = vec2(p.x + offset, Func);                                                \\
+    x = p.x + offset + xDelta;                                                    \\
+    p1 = vec2(p.x + offset + xDelta, Func);                                       \\
+    dist = min(dist, _glslSnippet_distanceToLine(p0, p1, p));                     \\
+}
+
 #define plot(Func, fragCoord, col)                                                \\
 {                                                                                 \\
     vec2 uv = fragCoord / iResolution.xy;                                         \\
@@ -48,6 +83,17 @@ float _glslSnippet_distanceToLine(vec2 p0, vec2 p1, vec2 p)
     vec2 p = uv * range - range / 2. + iPlot.xy;                                  \\
     float dist = 0.;                                                              \\
     _glslSnippet_distanceToFunc(Func, p, dist);                                   \\
+    float intensity = smoothstep(0., 1., 1. - dist);                              \\
+    col *= pow(intensity, 1./2.2);                                                \\
+}
+
+#define ploti(Func, fragCoord, col)                                               \\
+{                                                                                 \\
+    vec2 uv = fragCoord / iResolution.xy;                                         \\
+    vec2 range = vec2(iPlot.z * 2., iPlot.w * 2.);                                \\
+    vec2 p = uv * range - range / 2. + iPlot.xy;                                  \\
+    float dist = 0.;                                                              \\
+    _glslSnippet_distanceToInlineFunc(Func, p, dist);                             \\
     float intensity = smoothstep(0., 1., 1. - dist);                              \\
     col *= pow(intensity, 1./2.2);                                                \\
 }
