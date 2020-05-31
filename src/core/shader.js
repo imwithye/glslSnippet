@@ -1,3 +1,5 @@
+const glslInclude = require("./glslInclude");
+
 const VertBuffer = {
   pos: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
 };
@@ -5,14 +7,14 @@ const VertCode = `
 #version 300 es
 layout(location = 0) in vec4 pos;
 void main() { 
-    gl_Position = pos;
+  gl_Position = pos;
 }`;
 
 const VertCodeGL1 = `
 attribute vec4 pos;
 
 void main() { 
-    gl_Position = pos;
+  gl_Position = pos;
 }`;
 
 const FragCodeError = `
@@ -23,7 +25,7 @@ precision highp float;
 out vec4 FragColor;
 
 void main() {
-FragColor = vec4(1, 0, 1, 1);
+  FragColor = vec4(1, 0, 1, 1);
 }`;
 
 const FragCodeErrorGL1 = `
@@ -36,25 +38,22 @@ void main() {
 const FragCodeHeader = `
 #version 300 es
 
+#define WebGL2
+
 precision highp float;
-
-uniform vec2 iResolution;
-uniform float iTime;
-uniform float iTimeDelta;
-uniform float iFrame;
-uniform vec4 iMouse;
-
 out vec4 FragColor;
-  
+
+${glslInclude}
+
 `;
 
 const FragCodeHeaderGL1 = `
+#define WebGL1
+
 precision highp float;
 
-uniform vec2 iResolution;
-uniform float iTime;
-uniform float iTimeDelta;
-uniform float iFrame;
+${glslInclude}
+
 `;
 
 const FragCodeFooter = `
