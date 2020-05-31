@@ -51,4 +51,12 @@ float DistanceToLine(vec2 p0, vec2 p1, vec2 p)
     float intensity = smoothstep(0., 1., 1. - dist);                              \\
     col *= pow(intensity, 1./2.2);                                                \\
 }
+
+#define PlotGrid(fragCoord, col)                                                  \\
+{                                                                                 \\
+    vec2 uv = fragCoord / iResolution.xy;                                         \\
+    vec2 p = abs(uv - 0.5 + iPlot.xy / (iPlot.zw * 2.));                          \\
+    vec2 dist = 1. / iResolution * 1. - p;                                        \\
+    col *= clamp(step(0., dist.x) + step(0., dist.y), 0., 1.);                    \\
+}
 `;

@@ -22,10 +22,14 @@
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
-    vec3 col = vec3(1., 0., 0.);
-    Plot(log, fragCoord, col);
-    fragColor = vec4(col, 1.0);
-}
+    vec3 grid = vec3(0.3, 0.3, 0.3);
+    PlotGrid(fragCoord, grid);
+    
+    vec3 func = vec3(1., 1., 0.);
+    Plot(log, fragCoord, func);
+    
+    fragColor = vec4(grid + func, 1.0);
+}     
         </pre>
       </div>
     </div>
