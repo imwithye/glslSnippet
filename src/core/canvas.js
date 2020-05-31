@@ -104,6 +104,7 @@ class Canvas {
       (msg) => (errMsgs = msg)
     );
     if (this.programInfo != null) {
+      this.rewind();
       return [];
     }
     try {
