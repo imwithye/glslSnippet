@@ -25,11 +25,17 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     vec3 grid = vec3(0.3, 0.3, 0.3);
     PlotGrid(fragCoord, grid);
     
-    vec3 func = vec3(1., 1., 0.);
-    Plot(log, fragCoord, func);
+    vec3 f1 = vec3(1., 1., 0.);
+    Plot(log, fragCoord, f1);
     
-    fragColor = vec4(grid + func, 1.0);
-}     
+    vec3 f2 = vec3(1., 0., 0.);
+    Plot(sin, fragCoord, f2);
+    
+    vec3 f3 = vec3(0., 1., 1.);
+    Plot(cos, fragCoord, f3);
+    
+    fragColor = vec4(grid + f1 + f2 + f3, 1.0);
+}
         </pre>
       </div>
     </div>

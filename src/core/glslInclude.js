@@ -8,9 +8,9 @@ uniform vec4 iPlot;
 
 float DistanceToLine(vec2 p0, vec2 p1, vec2 p)
 {
-    p0 = ((p0 - iPlot.xy) + iPlot.zw) / (iPlot.zw * 2.) * iResolution.xy;
-    p1 = ((p1 - iPlot.xy) + iPlot.zw) / (iPlot.zw * 2.) * iResolution.xy;
-    p = ((p - iPlot.xy) + iPlot.zw) / (iPlot.zw * 2.) * iResolution.xy;
+    p0 = (p0 - iPlot.xy + iPlot.zw) / (iPlot.zw * 2.) * iResolution.xy;
+    p1 = (p1 - iPlot.xy + iPlot.zw) / (iPlot.zw * 2.) * iResolution.xy;
+    p = (p - iPlot.xy + iPlot.zw) / (iPlot.zw * 2.) * iResolution.xy;
     vec2 ld = p0 - p1;
     vec2 pd = p - p1;
     return length(pd - ld*clamp(dot(pd, ld)/dot(ld, ld), 0.0, 1.0)); 
@@ -55,8 +55,13 @@ float DistanceToLine(vec2 p0, vec2 p1, vec2 p)
 #define PlotGrid(fragCoord, col)                                                  \\
 {                                                                                 \\
     vec2 uv = fragCoord / iResolution.xy;                                         \\
-    vec2 p = abs(uv - 0.5 + iPlot.xy / (iPlot.zw * 2.));                          \\
-    vec2 dist = 1. / iResolution * 1. - p;                                        \\
-    col *= clamp(step(0., dist.x) + step(0., dist.y), 0., 1.);                    \\
+    vec2 p = uv * iPlot.zw * 2. - iPlot.zw + iPlot.xy;                            \\
+    vec2 pv = (0.5-abs(0.5-mod(p, 1.0))) / (iPlot.zw * 2.);                       \\
+    vec2 dist = 1. / iResolution * 0.5 - pv;                                      \\
+    float i = clamp(step(0., dist.x) + step(0., dist.y), 0., 1.);                 \\
+    pv = abs(uv - 0.5 + iPlot.xy / (iPlot.zw * 2.));                              \\
+    dist = 1. / iResolution * 1.5 - pv;                                           \\
+    i += clamp(step(0., dist.x) + step(0., dist.y), 0., 1.);                      \\
+    col *= clamp(i, 0., 1.);                                                      \\
 }
 `;
