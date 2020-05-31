@@ -21,6 +21,8 @@ class Canvas {
     container.appendChild(this.element);
 
     this.canvas = document.createElement('canvas');
+    this.canvas.width = 250;
+    this.canvas.height = 250;
     this.canvas.addEventListener('mousemove', this.mousemove.bind(this));
     this.element.appendChild(this.canvas);
 
@@ -29,12 +31,12 @@ class Canvas {
     this.control.on('play', this.play.bind(this));
     this.control.on('pause', this.pause.bind(this));
 
-    this.params = [];
     this.paramParser = new ParamParser();
     this.render = true;
     this.time = 0;
     this.frame = 0;
     this.mousePosition = { x: 0, y: 0 };
+    this.plot = [0, 0, 1, 1];
     this.gl = this.canvas.getContext('webgl2');
     if (this.gl != null) {
       this.gl2 = true;
@@ -89,11 +91,10 @@ class Canvas {
   }
 
   setFragmentCode(fragCode) {
-    const { params, errors } = this.paramParser.apply(this, fragCode);
+    const errors = this.paramParser.apply(this, fragCode);
     if (errors.length > 0) {
       return errors;
     }
-    this.params = params;
 
     fragCode = `${this.FragCodeHeader}${fragCode}${this.FragCodeFooter}`;
     let errMsgs = '';
@@ -126,10 +127,6 @@ class Canvas {
     }
   }
 
-  parseParams(fragCode) {
-    const lines = fragCode.split('\n');
-  }
-
   draw(deltaTime) {
     if (!this.render) {
       this.control.setTime(this.time / 1000);
@@ -144,10 +141,6 @@ class Canvas {
   }
 
   drawToCanvas(deltaTime) {
-    for (let i = 0; i < this.params.length; i++) {
-      this.params[i].apply(this);
-    }
-
     this.time = this.time + deltaTime;
     this.control.setTime(this.time / 1000);
     this.control.setFPS(1000 / deltaTime);
@@ -157,6 +150,7 @@ class Canvas {
       iTimeDelta: deltaTime / 1000,
       iFrame: this.frame,
       iMouse: [this.mousePosition.x, this.mousePosition.y, 0, 0],
+      iPlot: this.plot,
     };
     this.frame += 1;
     this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);

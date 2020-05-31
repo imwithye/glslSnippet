@@ -4,8 +4,7 @@ uniform float iTime;
 uniform float iTimeDelta;
 uniform float iFrame;
 uniform vec4 iMouse;
-
-vec4 iPlot = vec4(0., 0., 1, 1);
+uniform vec4 iPlot;
 
 float DistanceToLine(vec2 p0, vec2 p1, vec2 p)
 {

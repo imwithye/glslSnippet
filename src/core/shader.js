@@ -1,4 +1,4 @@
-const glslInclude = require("./glslInclude");
+const glslInclude = require('./glslInclude');
 
 const VertBuffer = {
   pos: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],

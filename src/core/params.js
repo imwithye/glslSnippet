@@ -5,7 +5,7 @@ class ParseError {
   }
 }
 
-class SizeParam {
+class iResolutionParam {
   constructor(lineno, code) {
     this.width = '250px';
     this.height = '250px';
@@ -45,6 +45,54 @@ class SizeParam {
       }px`;
       canvas.element.style.height = `${canvas.element.clientHeight + 64}px`;
     }
+    canvas.canvas.width = canvas.canvas.clientWidth;
+    canvas.canvas.height = canvas.canvas.clientHeight;
+  }
+}
+
+class iPlotParam {
+  constructor(lineno, code) {
+    this.plot = [0, 0, 1, 1];
+
+    const chunks = code
+      .split(' ')
+      .map((chunk) => chunk.trim())
+      .filter((chunk) => chunk.length > 0);
+    if (chunks.length < 3) {
+      throw new ParseError(
+        lineno,
+        'iPlot',
+        `${code} is not a vec3 or vec4 value`
+      );
+    }
+
+    for (let i = 0; i < 4; i++) {
+      if (chunks.length <= i) {
+        break;
+      }
+      if (!/\b\d+(\.\d*)?\b/.test(chunks[i])) {
+        throw new ParseError(
+          lineno,
+          'iPlot',
+          `${code} is not a vec3 or vec4 value`
+        );
+      }
+    }
+
+    this.plot[0] = parseFloat(chunks[0]);
+    this.plot[1] = parseFloat(chunks[1]);
+    this.plot[2] = parseFloat(chunks[2]);
+    this.plot[3] = chunks.length == 3 ? -1 : parseFloat(chunks[3]);
+  }
+
+  apply(canvas) {
+    if (this.plot[3] < 0) {
+      const yRange =
+        (this.plot[2] * canvas.canvas.height) / canvas.canvas.width;
+      canvas.plot = [this.plot[0], this.plot[1], this.plot[2], yRange];
+    } else {
+      canvas.plot = this.plot;
+    }
   }
 }
 
@@ -62,20 +110,27 @@ class ParamParser {
         const code = line.code.replace(regex, '').trim();
         return { name, code, lineno: line.lineno };
       });
-    const params = [];
+    const params = {};
     const errors = [];
     for (let i = 0; i < paramTokens.length; i++) {
       const paramToken = paramTokens[i];
       try {
-        if (paramToken.name == '+Size') {
-          const sizeParam = new SizeParam(paramToken.lineno, paramToken.code);
-          sizeParam.apply(canvas);
+        if (paramToken.name == '+iResolution') {
+          params['+iResolution'] = new iResolutionParam(
+            paramToken.lineno,
+            paramToken.code
+          );
+        }
+        if (paramToken.name == '+iPlot') {
+          params['+iPlot'] = new iPlotParam(paramToken.lineno, paramToken.code);
         }
       } catch (e) {
         errors.push(e);
       }
     }
-    return { params, errors };
+    if (params['+iResolution']) params['+iResolution'].apply(canvas);
+    if (params['+iPlot']) params['+iPlot'].apply(canvas);
+    return errors;
   }
 }
 
